@@ -11,7 +11,7 @@ inline void setUPHandler()
 Init init;
 int main(){
     spdlog::info("System init...");
-    spdlog::set_level(spdlog::level::debug);
+    spdlog::set_level(spdlog::level::trace);
     init.start();
 
 }

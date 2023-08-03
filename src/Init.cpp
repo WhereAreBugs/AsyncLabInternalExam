@@ -10,3 +10,11 @@ void Init::start() {
 
 }
 
+Init::Init() {
+
+}
+
+Init::~Init() {
+
+}
+

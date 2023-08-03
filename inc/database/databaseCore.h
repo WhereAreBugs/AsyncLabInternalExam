@@ -9,7 +9,7 @@
 
 
 class databaseCore {
-private:
+protected:
     std::string filename;
 public:
     void setFilename(std::string newFilename){filename = std::move(newFilename);}

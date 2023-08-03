@@ -13,7 +13,7 @@ public:
     {
         std::string realName;
         std::size_t password; //使用hash值存储密码
-        enum userType{Admin, Student, Teacher} type;
+        enum userType{Normal, Admin} type;
     };
     inline  bool checkExist(const std::string &username);
 private:
@@ -22,11 +22,14 @@ private:
     std::mutex globalMapMutex;
 public:
     WebData();
-    bool add(const std::string &username, const std::string &realName, const std::string &password, const std::string &type);
+    bool checkLogin(const std::string &username, const std::string &password);
+    bool add(const std::string &username, const std::string &realName, const std::string &password, uint8_t type);
     bool remove(const std::string &username);
     bool changePassword(const std::string &username, const std::string &oldPassword, const std::string &newPassword);
     void write2File() override;
     void readFromFile() override;
+    bool resetPassword(std::string username);
+
 
 };
 

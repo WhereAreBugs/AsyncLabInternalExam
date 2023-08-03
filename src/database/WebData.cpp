@@ -4,6 +4,8 @@
 
 #include "WebData.h"
 #include <fstream>
+#include <spdlog/spdlog.h>
+
 std::size_t WebData::getHash(const std::string &str) {
     //使用STL计算字符串的hash值
     std::hash<std::string> hash_fn;
@@ -19,14 +21,8 @@ WebData::WebData()
 }
 
 bool WebData::add(const std::string &username, const std::string &realName, const std::string &password,
-                  const std::string &type) {
-    struct userData newData{.realName = realName,.password = getHash(password), .type = type== "Admin"?userData::Admin:type== "Student"?userData::Student:userData::Teacher};
-    //Q: 为什么这里要使用lock_guard?
-    //A: 因为std::map不是线程安全的，所以需要使用锁来保证线程安全
-    //Q: 为什么不直接使用mutex?
-    //A: 因为lock_guard可以自动释放锁，而mutex需要手动释放
-    //Q: 这里lock_guard的作用域是什么?
-    //A: 作用域是整个函数，当函数结束时，lock_guard会自动释放锁
+                  uint8_t type) {
+    struct userData newData{.realName = realName,.password = getHash(password), .type = static_cast<userData::userType>(type)};
     std::lock_guard<std::mutex> lock(globalMapMutex);
     if (checkExist(username))
         return false;
@@ -79,7 +75,30 @@ void WebData::readFromFile() {
     std::string username, realName, password, type;
     while (file >> username >> realName >> password >> type)
     {
-        data.emplace(username,userData{.realName = realName, .password = std::stoull(password), .type = type== "Admin"?userData::Admin:type== "Student"?userData::Student:userData::Teacher});
+        data.emplace(username,userData{.realName = realName, .password = std::stoull(password), .type = static_cast<userData::userType>(std::stoi(type))});
     }
     file.close();
 }
+
+bool WebData::checkLogin(const std::string &username, const std::string &password) {
+    std::lock_guard<std::mutex> lock(globalMapMutex);
+    if (!checkExist(username))
+        return false;
+    return data.at(username).password == getHash(password);
+}
+
+bool WebData::resetPassword(std::string username) {
+    std::lock_guard<std::mutex> lock(globalMapMutex);
+    if (!checkExist(username))
+        return false;
+    try {
+        data.at(username).password = getHash("123456");
+    }
+    catch (std::out_of_range &e){
+        spdlog::error("WebData::resetPassword: {}", e.what());
+        return false;
+    }
+    return true;
+}
+
+

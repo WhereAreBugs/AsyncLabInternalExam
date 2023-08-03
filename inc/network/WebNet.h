@@ -6,9 +6,13 @@
 #define SIMPLELABMANAGER_WEBNET_H
 #include "tcpserver.hpp"
 #include "webBuffer.h"
+#include "WebData.h"
+#include "seatData.h"
+#include "activatys.h"
 #include <map>
 class WebNet {
 private:
+    std::mutex globalTokensMutex;
     std::map<std::string,std::string> tokens;
     TCPServer<0x1000> server; //默认为每个链接分配最大0x1000(4096)字节的缓冲区
    typedef struct
@@ -18,7 +22,10 @@ private:
     }HeadData;
     std::mutex globalBufferMutex;
     std::map<TCPSocket<> * , webBuffer *> buffers;
-private: // 私有的回掉函数及关键函数
+    WebData * dataHandler = nullptr;
+    seatData * seatHandler = nullptr;
+    activatys * activatysHandler = nullptr;
+private: // 私有的回调函数及关键函数
     void onNewMessage(std::string message, TCPSocket<> *newClient);
     void buildHeader(std::string &message, uint8_t type, uint16_t size, TCPSocket<> *newClient);
     bool rejecter(const std::string &message);
@@ -105,6 +112,15 @@ private: //私有的业务函数
      * @arg type==11
      */
     void onAdminUnbindUserSeat(std::string message, TCPSocket<> *newClient);
+public: //当前类的setter和getter
+    void setDataHandler(WebData *dataHandler);
+    void setSeatHandler(seatData *seatHandler);
+    void setActivatysHandler(activatys *activatysHandler);
+    void setToken(std::string token, std::string username);
+    std::string getToken(std::string username);
+    void removeToken(std::string username);
+    ~WebNet();
+
 };
 
 

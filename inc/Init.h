@@ -7,12 +7,14 @@
 #include <vector>
 #include "WebNet.h"
 #include "databaseCore.h"
-
+#include "seatData.h"
 class Init {
 private:
     std::vector<WebNet *> networkCommpents;
     std::vector<databaseCore *> databaseCommpents;
 public:
+    Init();
+    ~Init();
     void start();
 };
 
