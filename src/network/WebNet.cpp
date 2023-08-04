@@ -5,6 +5,7 @@
 #include "network/WebNet.h"
 #include <utility>
 #include "spdlog/spdlog.h"
+#include "Buffer.h"
 
 /**
  * @brief 构造函数，初始化前后端交互的服务端
@@ -57,7 +58,12 @@ WebNet::WebNet() {
  */
 void WebNet::onNewMessage(std::string message, TCPSocket<> *newClient) { // NOLINT(performance-unnecessary-value-param)
     std::lock_guard<std::mutex> lock(globalBufferMutex);
-    buffers.at(newClient)->addBuffer(std::move(message));
+    try {
+        buffers.at(newClient)->addBuffer(std::move(message));
+    } catch (std::out_of_range &e) {
+        spdlog::trace("Out of range: " + std::string(e.what()));
+        return;
+    }
     if (buffers.at(newClient)->isComplete()) {
         std::string completeMessage = buffers.at(newClient)->getMessage();
         buffers.at(newClient)->clearBuffer();

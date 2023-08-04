@@ -8,6 +8,7 @@
 #include "WebNet.h"
 #include "databaseCore.h"
 #include "seatData.h"
+#include "identifyer.h"
 class Init {
 private:
     std::vector<WebNet *> networkCommpents;

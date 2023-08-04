@@ -13,9 +13,10 @@
 #include <string>
 #include <functional>
 #include <cerrno>
+#include <spdlog/spdlog.h>
 
 #define FDR_UNUSED(expr){ (void)(expr); } 
-#define FDR_ON_ERROR std::function<void(int, std::string)> onError = [](int errorCode, std::string errorMessage){FDR_UNUSED(errorCode); FDR_UNUSED(errorMessage)}
+#define FDR_ON_ERROR std::function<void(int, std::string)> onError = [](int errorCode, std::string errorMessage){FDR_UNUSED(errorCode); FDR_UNUSED(errorMessage);}
 
 #ifndef AS_DEFAULT_BUFFER_SIZE
 #define AS_DEFAULT_BUFFER_SIZE 0x1000 /*4096 bytes*/
@@ -36,9 +37,9 @@ public:
         close(this->sock);
     }
 
-    std::string remoteAddress() const { return ipToString(this->address); }
-    int remotePort() const { return ntohs(this->address.sin_port); }
-    int fileDescriptor() const { return this->sock; }
+    [[nodiscard]] std::string remoteAddress() const { return ipToString(this->address); }
+    [[nodiscard]] int remotePort() const { return ntohs(this->address.sin_port); }
+    [[nodiscard]] int fileDescriptor() const { return this->sock; }
 
 protected:
     int sock = 0;

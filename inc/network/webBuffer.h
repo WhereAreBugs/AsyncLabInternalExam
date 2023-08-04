@@ -6,22 +6,14 @@
 #define SIMPLELABMANAGER_WEBBUFFER_H
 
 #include "tcpserver.hpp"
+#include "Buffer.h"
 
-class webBuffer {
-private:
-    std::string currentBuffer;
-    std::string token = 0;
-    inline void removeRubbishFromBuffer();
+class webBuffer : public Buffer {
 public:
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "readability-avoid-const-params-in-decls"
-    void addBuffer(const std::string message);
-#pragma clang diagnostic pop
-    void clearBuffer();
-    bool isComplete();
+
+    bool isComplete() override;
     void generateToken();
     std::string getToken();
-    std::string getMessage();
 };
 
 
