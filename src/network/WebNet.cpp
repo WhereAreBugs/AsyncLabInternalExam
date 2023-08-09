@@ -6,6 +6,7 @@
 #include <utility>
 #include "spdlog/spdlog.h"
 #include "Buffer.h"
+#include "settings.h"
 
 /**
  * @brief 构造函数，初始化前后端交互的服务端
@@ -353,7 +354,14 @@ void WebNet::removeToken(std::string username) {
     }
 }
 
-WebNet::~WebNet() {
+WebNet::~WebNet() = default;
 
-
+void WebNet::setup() {
+    server.Bind("0.0.0.0",PORT_WEB,[](int code,std::string msg){
+        spdlog::error("[WebNet] [{}] {}",code,msg);
+    });
+    server.Listen([](int code, std::string msg) {
+            spdlog::error("[WebNet] [{}] {}", code, msg);
+        });
+    spdlog::trace("[WebNet] [setup] listen Loop!");
 }

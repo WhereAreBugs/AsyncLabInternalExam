@@ -28,7 +28,7 @@ bool webBuffer::isComplete() {
     {
         return false;
     }
-
+    return true;
 }
 
 

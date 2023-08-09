@@ -32,7 +32,7 @@ private: // 私有的回调函数及关键函数
     HeadData processHeader(const std::string& header, TCPSocket<> *Clinet);
 public:
     WebNet();
-
+    [[noreturn]]void setup();
 private: //各种函数的工具函数
     static inline void appendStr(std::string &message, const void * src, std::size_t size);
 private: //私有的业务函数

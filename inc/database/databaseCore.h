@@ -12,6 +12,7 @@ class databaseCore {
 protected:
     std::string filename;
 public:
+    virtual ~databaseCore() = default;
     void setFilename(std::string newFilename){filename = std::move(newFilename);}
     std::string getFilename(){return filename;}
     virtual void write2File() = 0;

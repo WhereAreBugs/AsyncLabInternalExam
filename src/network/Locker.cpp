@@ -3,21 +3,21 @@
 //
 
 #include "Locker.h"
-
+#include "settings.h"
 #include <utility>
 #include <spdlog/spdlog.h>
 
 void Locker::setup() {
-    socket.onMessageReceived = [this](std::string data){
+    socket.onMessageReceived = [this](std::string data) {
         this->onRecvice(std::move(data));
     };
     socket.deleteAfterClosed = false;
-    socket.onSocketClosed = [this](int a){
+    socket.onSocketClosed = [this](int a) {
         spdlog::error("[Locker] Socket closed! error code: {}", a);
         status = 2; // 2 means socket closed
         this->setup();
     };
-    socket.Connect("127.0.0.1", 2333);
+    socket.Connect(LOCKER_ADDR, PORT_LOCKER);
 
 }
 
